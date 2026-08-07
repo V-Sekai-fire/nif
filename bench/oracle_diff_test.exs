@@ -1,11 +1,26 @@
 #!/usr/bin/env elixir
 # MiniZinc-as-teacher differential test against Taskweft.plan/1.
 #
-# Real, run comparison, not a hypothetical: for each problem variant
-# below, this calls the real Taskweft.plan/1 (the "student") and shells
-# out to a real `minizinc --solver gecode` run against
+# Real, run comparison, not a hypothetical: for each domain/problem
+# variant below, this calls the real Taskweft.plan/1 (the "student") and
+# shells out to a real `minizinc --solver gecode` run against
 # bench/fixtures/oracle/warehouse_2robots_3pkg.mzn (the "teacher") to
 # get the true optimal total_minutes, then reports the gap.
+#
+# Two domains compared side by side:
+#   - warehouse_domain_2robots.jsonld: the "delivered" goal method
+#     offers robot_1 and robot_2 as two blind, always-succeeding
+#     alternatives. The search takes the first one that succeeds
+#     (robot_1, by declaration order) and never compares it against the
+#     other -- tw_order_methods/tw_note_method_result cannot help here
+#     at all, since they only ever learn from alternatives the search
+#     actually tries (see taskweft/nif#46's real root-cause finding).
+#   - warehouse_domain_2robots_dock_preferred.jsonld: the SAME domain,
+#     with the "delivered" goal method's alternatives reordered to gate
+#     on which robot is actually at "dock" via a real "check" clause --
+#     no solver change at all, a pure domain-design fix. Only one
+#     alternative is ever applicable at a time, so there is nothing
+#     left for the search to blindly pick between.
 #
 # Needs a real `minizinc` binary on PATH (with the Gecode solver, which
 # ships built in). Run with: mix run bench/oracle_diff_test.exs
@@ -13,24 +28,23 @@
 defmodule OracleDiffTest do
   @oracle_dir Path.join([__DIR__, "fixtures", "oracle"])
   @oracle_mzn Path.join(@oracle_dir, "warehouse_2robots_3pkg.mzn")
+  @domains_dir Path.join([__DIR__, "fixtures", "domains"])
 
-  @domain_path Path.join([
-                 __DIR__,
-                 "fixtures",
-                 "domains",
-                 "warehouse_domain_2robots.jsonld"
-               ])
-
-  # Each case: {label, robot_1 start, robot_2 start, oracle .dzn file}.
+  # Each case: {label, domain file, robot_1 start, robot_2 start, oracle .dzn file}.
   @cases [
-    {"robot_1 starts at dock", "dock", "shipping", "robot1_dock.dzn"},
-    {"robot_2 starts at dock", "shipping", "dock", "robot2_dock.dzn"}
+    {"blind (robot_1 always tried first), robot_1 starts at dock",
+     "warehouse_domain_2robots.jsonld", "dock", "shipping", "robot1_dock.dzn"},
+    {"blind (robot_1 always tried first), robot_2 starts at dock",
+     "warehouse_domain_2robots.jsonld", "shipping", "dock", "robot2_dock.dzn"},
+    {"dock-preferred (domain-level fix), robot_1 starts at dock",
+     "warehouse_domain_2robots_dock_preferred.jsonld", "dock", "shipping", "robot1_dock.dzn"},
+    {"dock-preferred (domain-level fix), robot_2 starts at dock",
+     "warehouse_domain_2robots_dock_preferred.jsonld", "shipping", "dock", "robot2_dock.dzn"}
   ]
 
   def run do
-    domain = @domain_path |> File.read!() |> Jason.decode!()
-
-    Enum.each(@cases, fn {label, r1_at, r2_at, dzn} ->
+    Enum.each(@cases, fn {label, domain_file, r1_at, r2_at, dzn} ->
+      domain = @domains_dir |> Path.join(domain_file) |> File.read!() |> Jason.decode!()
       student_minutes = plan_total_minutes(domain, r1_at, r2_at)
       teacher_minutes = oracle_optimal_minutes(dzn)
       gap = student_minutes - teacher_minutes
