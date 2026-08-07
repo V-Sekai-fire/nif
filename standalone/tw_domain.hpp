@@ -19,20 +19,44 @@ struct TwCall {
 // Maps to IPyHOP unigoal ('var', 'key', desired_val).
 //
 // Satisfaction strategy (in priority order):
-//  1. ReBAC check — if state.rebac_graph is set and non-empty:
+//  1. ReBAC check — if state.rebac_graph is set and non-empty, AND desired
+//     is a string (a ReBAC object is always an entity name, never a bool/
+//     int/float/array/dict; this is what actually distinguishes a relation
+//     check from an ordinary state binding, not merely "a graph exists
+//     somewhere in this domain" -- see the bug note below):
 //     • var is a JSON object  → parsed as a full RelationExpr (union, intersection,
 //       difference, tuple_to_userset, …) and evaluated via check_expr.
 //     • var is a plain string → auto-wrapped as {"type":"base","rel":var}
 //       covering all relation types with IS_MEMBER_OF inheritance.
 //     key = subject entity, desired = object entity.
 //  2. Plain equality fallback — state[var][key] == desired (legacy behaviour).
+//
+// Real bug fixed here: this used to gate step 1 on "a graph exists" alone,
+// with no check on desired's type at all. Any domain that declares
+// "capabilities" (building a real, non-empty rebac_graph) silently routed
+// every ordinary TwGoal/TwMultiGoal binding, even a plain boolean check
+// like {var: "delivered", key: "package_1", desired: true}, into
+// check_expr instead of state equality. desired.as_string() on a bool
+// TwValue returns the unset default "" (TwValue::as_string() just reads
+// the internal string field, never populated for a bool), so check_expr
+// could never match a real edge, and the binding failed unconditionally
+// -- not a rare edge case, but every ordinary goal binding in any domain
+// that also happens to use "capabilities", confirmed live: a two-step
+// warehouse-delivery domain with real "capabilities" entities returned
+// no_plan for its own goal-based todo_list while the identical plan
+// built from direct action-sequence calls (no goal binding involved)
+// succeeded. Gating on desired.is_string() fixes it with no per-domain
+// configuration: a real ReBAC object is always a string entity name, so
+// this is a sound, general signal already present in the data, not a
+// heuristic tuned to any one domain's variable names.
 struct TwGoalBinding {
     std::string var;
     std::string key;
     TwValue     desired;
 
     bool satisfied(const TwState &state) const {
-        if ((state.rebac_graph) && (!state.rebac_graph->edges.empty())) {
+        if ((state.rebac_graph) && (!state.rebac_graph->edges.empty()) &&
+                desired.is_string()) {
             TwValue expr;
             if (!var.empty() && var.front() == '{') {
                 expr = TwJson::parse_json_str(var);
