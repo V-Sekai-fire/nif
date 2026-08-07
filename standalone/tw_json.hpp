@@ -3,6 +3,8 @@
 #pragma once
 #include "tw_value.hpp"
 #include <cctype>
+#include <cerrno>
+#include <cstdlib>
 #include <cstring>
 #include <sstream>
 #include <string>
@@ -114,9 +116,16 @@ inline TwValue parse_json_number(const char *&p, const char *end) {
 		while (p < end && std::isdigit((unsigned char)*p)) ++p;
 	}
 	std::string tok(start, p - start);
-	if (is_float) return TwValue(std::stod(tok));
-	try { return TwValue((int64_t)std::stoll(tok)); }
-	catch (...) { return TwValue(std::stod(tok)); }
+	// strtod/strtoll (unlike stod/stoll) never throw -- an out-of-range
+	// value clamps to +/-HUGE_VAL or LLONG_MIN/LLONG_MAX and sets errno,
+	// which is exactly the fallback-to-double behavior the try/catch
+	// below used to implement, just without needing exception support.
+	if (is_float) return TwValue(std::strtod(tok.c_str(), nullptr));
+	errno = 0;
+	char *int_end = nullptr;
+	long long v = std::strtoll(tok.c_str(), &int_end, 10);
+	if (errno == ERANGE) return TwValue(std::strtod(tok.c_str(), nullptr));
+	return TwValue((int64_t)v);
 }
 
 inline TwValue parse_json(const char *&p, const char *end) {

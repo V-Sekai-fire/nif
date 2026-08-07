@@ -67,12 +67,18 @@ struct TwBudget {
     }
 };
 
-// Thrown out of `tw_seek_plan` when the wall-clock budget is exhausted.
-// NIF callers translate to a distinct error so consumers can tell
-// "no plan exists" from "we ran out of time".
-struct TwBudgetExceeded : std::runtime_error {
-    TwBudgetExceeded() : std::runtime_error("planner_time_budget_exceeded") {}
-};
+// When the wall-clock budget is exhausted, tw_seek_plan/tw_seek_plan_tree
+// return std::nullopt, the same as any other "no plan found" outcome --
+// this used to throw TwBudgetExceeded, but nothing anywhere in this repo
+// ever caught it (confirmed by grep), so a genuine budget-exceeded event
+// during planning previously propagated as an uncaught C++ exception out
+// of the NIF boundary, a real crash bug, not merely an exceptions-style
+// preference. TwBudget::fired (above) still distinguishes the two cases
+// for a caller that constructs and inspects its own TwBudget directly;
+// tw_plan()/tw_plan_with_tree() do not expose it today, since neither
+// currently has a caller that needs to tell "no plan exists" apart from
+// "ran out of time" -- add that if a real caller needs it, rather than
+// widen the return type speculatively here.
 
 // Serialize a TwCall to a canonical string key for blacklist membership tests.
 // Mirrors Python's tuple identity: ("action_name", arg1, arg2, ...).
@@ -414,7 +420,7 @@ inline std::optional<std::vector<TwCall>> tw_seek_plan(
         TwSuccessCache          *success_cache = nullptr,
         TwMethodStats           *method_stats = nullptr) {
 
-    if (budget.exceeded()) throw TwBudgetExceeded{};
+    if (budget.exceeded()) return std::nullopt;
     if (tasks.empty()) return std::vector<TwCall>{};
 
     // Cache key/mark_fail/mark_success are tied to the (state, tasks) this
@@ -463,7 +469,7 @@ inline std::optional<std::vector<TwCall>> tw_seek_plan(
     std::vector<TwCall> prefix;
     size_t idx = 0;
     for (;;) {
-        if (budget.exceeded()) throw TwBudgetExceeded{};
+        if (budget.exceeded()) return std::nullopt;
         if (idx >= tasks.size()) {
             mark_success(prefix);
             return prefix;
@@ -651,7 +657,7 @@ inline std::optional<std::vector<TwCall>> tw_seek_plan_tree(
         TwBudget                  &budget,
         TwFailCache               *fail_cache  = nullptr) {
 
-    if (budget.exceeded()) throw TwBudgetExceeded{};
+    if (budget.exceeded()) return std::nullopt;
     if (fuel <= 0) return std::nullopt;
     if (tasks.empty()) return std::vector<TwCall>{};
 

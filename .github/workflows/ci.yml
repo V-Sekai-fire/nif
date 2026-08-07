@@ -87,3 +87,26 @@ jobs:
 
       - name: mix test
         run: mix test
+
+      # standalone/ (the embeddable subset this Erlang NIF wraps) is meant
+      # to build with no exception support at all -- confirms it stays that
+      # way, not just today.
+      - name: Verify standalone/ builds under -fno-exceptions
+        if: matrix.toolchain == 'gcc'
+        run: |
+          cat > /tmp/tw_standalone_smoke.cpp <<'EOF'
+          #include "standalone/tw_value.hpp"
+          #include "standalone/tw_json.hpp"
+          #include "standalone/tw_rebac.hpp"
+          #include "standalone/tw_state.hpp"
+          #include "standalone/tw_domain.hpp"
+          #include "standalone/tw_planner.hpp"
+          int main() {
+              TwValue v = TwJson::parse_json_str("{\"a\":1}");
+              return v.is_dict() ? 0 : 1;
+          }
+          EOF
+          g++ -std=c++20 -fno-exceptions -Wall -Wextra \
+              -I . \
+              -o /tmp/tw_standalone_smoke /tmp/tw_standalone_smoke.cpp
+          /tmp/tw_standalone_smoke
