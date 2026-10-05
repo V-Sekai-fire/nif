@@ -156,7 +156,7 @@ defmodule Taskweft.DifferentialTest do
       "collision control (4-bit search and task-list keys): #{Enum.count(runs, fn {_, r} -> r.collisions > 0 end)} cases flagged, by detector #{inspect(flagged)}; base #{inspect(Run.flagged_by_kind(ctx.base))}"
     )
 
-    assert flagged.fail_cache > 0 and flagged.decomposition > 0
+    assert flagged.fail_cache > 0 and flagged.success_cache > 0 and flagged.decomposition > 0
   end
 
   test "the method-stats collision detector fires on a build with 4-bit method-call keys", ctx do
