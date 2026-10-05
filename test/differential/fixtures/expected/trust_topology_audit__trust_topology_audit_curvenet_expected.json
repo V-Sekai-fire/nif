@@ -1,0 +1,110 @@
+{
+  "plan": [
+    [
+      "a_inventory_gates"
+    ],
+    [
+      "a_apply_overlap_ratio"
+    ],
+    [
+      "a_apply_verification_amplification"
+    ],
+    [
+      "a_apply_deterministic_ceiling"
+    ],
+    [
+      "a_apply_liveness_constraint"
+    ],
+    [
+      "a_synthesize_recommendations"
+    ],
+    [
+      "a_publish_audit"
+    ]
+  ],
+  "steps": 7,
+  "tree": [
+    {
+      "children": [
+        1
+      ],
+      "id": 0,
+      "kind": "root",
+      "parent": -1
+    },
+    {
+      "children": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "first_step": 0,
+      "id": 1,
+      "kind": "task",
+      "method_idx": 0,
+      "name": "write_trust_topology_audit",
+      "parent": 0
+    },
+    {
+      "children": [],
+      "id": 2,
+      "kind": "action",
+      "name": "a_inventory_gates",
+      "parent": 1,
+      "plan_step": 0
+    },
+    {
+      "children": [],
+      "id": 3,
+      "kind": "action",
+      "name": "a_apply_overlap_ratio",
+      "parent": 1,
+      "plan_step": 1
+    },
+    {
+      "children": [],
+      "id": 4,
+      "kind": "action",
+      "name": "a_apply_verification_amplification",
+      "parent": 1,
+      "plan_step": 2
+    },
+    {
+      "children": [],
+      "id": 5,
+      "kind": "action",
+      "name": "a_apply_deterministic_ceiling",
+      "parent": 1,
+      "plan_step": 3
+    },
+    {
+      "children": [],
+      "id": 6,
+      "kind": "action",
+      "name": "a_apply_liveness_constraint",
+      "parent": 1,
+      "plan_step": 4
+    },
+    {
+      "children": [],
+      "id": 7,
+      "kind": "action",
+      "name": "a_synthesize_recommendations",
+      "parent": 1,
+      "plan_step": 5
+    },
+    {
+      "children": [],
+      "id": 8,
+      "kind": "action",
+      "name": "a_publish_audit",
+      "parent": 1,
+      "plan_step": 6
+    }
+  ],
+  "tree_nodes": 9
+}

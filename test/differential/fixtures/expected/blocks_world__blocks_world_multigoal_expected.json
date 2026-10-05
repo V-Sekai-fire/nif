@@ -1,0 +1,292 @@
+{
+  "plan": [
+    [
+      "a_unstack",
+      "a"
+    ],
+    [
+      "a_putdown",
+      "a"
+    ],
+    [
+      "a_pickup",
+      "b"
+    ],
+    [
+      "a_stack",
+      "b",
+      "a"
+    ],
+    [
+      "a_pickup",
+      "c"
+    ],
+    [
+      "a_stack",
+      "c",
+      "b"
+    ]
+  ],
+  "steps": 6,
+  "tree": [
+    {
+      "children": [
+        1
+      ],
+      "id": 0,
+      "kind": "root",
+      "parent": -1
+    },
+    {
+      "args": [
+        "a",
+        "table"
+      ],
+      "children": [
+        2
+      ],
+      "first_step": 0,
+      "id": 1,
+      "kind": "goal",
+      "method_idx": 0,
+      "name": "pos",
+      "parent": 0
+    },
+    {
+      "args": [
+        "a",
+        "table"
+      ],
+      "children": [
+        3
+      ],
+      "first_step": 0,
+      "id": 2,
+      "kind": "task",
+      "method_idx": 0,
+      "name": "move_one",
+      "parent": 1
+    },
+    {
+      "args": [
+        "a"
+      ],
+      "children": [
+        4,
+        5
+      ],
+      "first_step": 0,
+      "id": 3,
+      "kind": "task",
+      "method_idx": 1,
+      "name": "get",
+      "parent": 2
+    },
+    {
+      "args": [
+        "a"
+      ],
+      "children": [],
+      "id": 4,
+      "kind": "action",
+      "name": "a_unstack",
+      "parent": 3,
+      "plan_step": 0
+    },
+    {
+      "args": [
+        "a",
+        "table"
+      ],
+      "children": [
+        6,
+        7
+      ],
+      "first_step": 1,
+      "id": 5,
+      "kind": "task",
+      "method_idx": 1,
+      "name": "put",
+      "parent": 3
+    },
+    {
+      "args": [
+        "a"
+      ],
+      "children": [],
+      "id": 6,
+      "kind": "action",
+      "name": "a_putdown",
+      "parent": 5,
+      "plan_step": 1
+    },
+    {
+      "args": [
+        "b",
+        "a"
+      ],
+      "children": [
+        8
+      ],
+      "first_step": 2,
+      "id": 7,
+      "kind": "goal",
+      "method_idx": 0,
+      "name": "pos",
+      "parent": 5
+    },
+    {
+      "args": [
+        "b",
+        "a"
+      ],
+      "children": [
+        9
+      ],
+      "first_step": 2,
+      "id": 8,
+      "kind": "task",
+      "method_idx": 0,
+      "name": "move_one",
+      "parent": 7
+    },
+    {
+      "args": [
+        "b"
+      ],
+      "children": [
+        10,
+        11
+      ],
+      "first_step": 2,
+      "id": 9,
+      "kind": "task",
+      "method_idx": 0,
+      "name": "get",
+      "parent": 8
+    },
+    {
+      "args": [
+        "b"
+      ],
+      "children": [],
+      "id": 10,
+      "kind": "action",
+      "name": "a_pickup",
+      "parent": 9,
+      "plan_step": 2
+    },
+    {
+      "args": [
+        "b",
+        "a"
+      ],
+      "children": [
+        12,
+        13
+      ],
+      "first_step": 3,
+      "id": 11,
+      "kind": "task",
+      "method_idx": 0,
+      "name": "put",
+      "parent": 9
+    },
+    {
+      "args": [
+        "b",
+        "a"
+      ],
+      "children": [],
+      "id": 12,
+      "kind": "action",
+      "name": "a_stack",
+      "parent": 11,
+      "plan_step": 3
+    },
+    {
+      "args": [
+        "c",
+        "b"
+      ],
+      "children": [
+        14
+      ],
+      "first_step": 4,
+      "id": 13,
+      "kind": "goal",
+      "method_idx": 0,
+      "name": "pos",
+      "parent": 11
+    },
+    {
+      "args": [
+        "c",
+        "b"
+      ],
+      "children": [
+        15
+      ],
+      "first_step": 4,
+      "id": 14,
+      "kind": "task",
+      "method_idx": 0,
+      "name": "move_one",
+      "parent": 13
+    },
+    {
+      "args": [
+        "c"
+      ],
+      "children": [
+        16,
+        17
+      ],
+      "first_step": 4,
+      "id": 15,
+      "kind": "task",
+      "method_idx": 0,
+      "name": "get",
+      "parent": 14
+    },
+    {
+      "args": [
+        "c"
+      ],
+      "children": [],
+      "id": 16,
+      "kind": "action",
+      "name": "a_pickup",
+      "parent": 15,
+      "plan_step": 4
+    },
+    {
+      "args": [
+        "c",
+        "b"
+      ],
+      "children": [
+        18
+      ],
+      "first_step": 5,
+      "id": 17,
+      "kind": "task",
+      "method_idx": 0,
+      "name": "put",
+      "parent": 15
+    },
+    {
+      "args": [
+        "c",
+        "b"
+      ],
+      "children": [],
+      "id": 18,
+      "kind": "action",
+      "name": "a_stack",
+      "parent": 17,
+      "plan_step": 5
+    }
+  ],
+  "tree_nodes": 19
+}

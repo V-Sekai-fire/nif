@@ -1,0 +1,103 @@
+{
+  "plan": [
+    [
+      "a_prepare_room",
+      "OR1",
+      "cardiac"
+    ],
+    [
+      "a_perform_surgery",
+      "patient1",
+      "OR1",
+      "cardiac"
+    ],
+    [
+      "a_recover_patient",
+      "patient1",
+      "OR1"
+    ],
+    [
+      "a_clean_room",
+      "OR1"
+    ]
+  ],
+  "steps": 4,
+  "tree": [
+    {
+      "children": [
+        1
+      ],
+      "id": 0,
+      "kind": "root",
+      "parent": -1
+    },
+    {
+      "args": [
+        "patient1",
+        "OR1",
+        "cardiac"
+      ],
+      "children": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "first_step": 0,
+      "id": 1,
+      "kind": "task",
+      "method_idx": 0,
+      "name": "schedule_surgery",
+      "parent": 0
+    },
+    {
+      "args": [
+        "OR1",
+        "cardiac"
+      ],
+      "children": [],
+      "id": 2,
+      "kind": "action",
+      "name": "a_prepare_room",
+      "parent": 1,
+      "plan_step": 0
+    },
+    {
+      "args": [
+        "patient1",
+        "OR1",
+        "cardiac"
+      ],
+      "children": [],
+      "id": 3,
+      "kind": "action",
+      "name": "a_perform_surgery",
+      "parent": 1,
+      "plan_step": 1
+    },
+    {
+      "args": [
+        "patient1",
+        "OR1"
+      ],
+      "children": [],
+      "id": 4,
+      "kind": "action",
+      "name": "a_recover_patient",
+      "parent": 1,
+      "plan_step": 2
+    },
+    {
+      "args": [
+        "OR1"
+      ],
+      "children": [],
+      "id": 5,
+      "kind": "action",
+      "name": "a_clean_room",
+      "parent": 1,
+      "plan_step": 3
+    }
+  ],
+  "tree_nodes": 6
+}

@@ -1,0 +1,111 @@
+{
+  "plan": [
+    [
+      "a_walk",
+      "alice",
+      "2"
+    ],
+    [
+      "a_walk",
+      "bob",
+      "2"
+    ]
+  ],
+  "steps": 2,
+  "tree": [
+    {
+      "children": [
+        1
+      ],
+      "id": 0,
+      "kind": "root",
+      "parent": -1
+    },
+    {
+      "args": [
+        "alice",
+        2
+      ],
+      "children": [
+        2
+      ],
+      "first_step": 0,
+      "id": 1,
+      "kind": "goal",
+      "method_idx": 0,
+      "name": "loc",
+      "parent": 0
+    },
+    {
+      "args": [
+        "alice",
+        2
+      ],
+      "children": [
+        3,
+        4
+      ],
+      "first_step": 0,
+      "id": 2,
+      "kind": "task",
+      "method_idx": 1,
+      "name": "travel",
+      "parent": 1
+    },
+    {
+      "args": [
+        "alice",
+        2
+      ],
+      "children": [],
+      "id": 3,
+      "kind": "action",
+      "name": "a_walk",
+      "parent": 2,
+      "plan_step": 0
+    },
+    {
+      "args": [
+        "bob",
+        2
+      ],
+      "children": [
+        5
+      ],
+      "first_step": 1,
+      "id": 4,
+      "kind": "goal",
+      "method_idx": 0,
+      "name": "loc",
+      "parent": 2
+    },
+    {
+      "args": [
+        "bob",
+        2
+      ],
+      "children": [
+        6
+      ],
+      "first_step": 1,
+      "id": 5,
+      "kind": "task",
+      "method_idx": 1,
+      "name": "travel",
+      "parent": 4
+    },
+    {
+      "args": [
+        "bob",
+        2
+      ],
+      "children": [],
+      "id": 6,
+      "kind": "action",
+      "name": "a_walk",
+      "parent": 5,
+      "plan_step": 1
+    }
+  ],
+  "tree_nodes": 7
+}

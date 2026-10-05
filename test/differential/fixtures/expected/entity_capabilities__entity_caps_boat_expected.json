@@ -1,0 +1,48 @@
+{
+  "plan": [
+    [
+      "a_swim",
+      "boat_1",
+      "3"
+    ]
+  ],
+  "steps": 1,
+  "tree": [
+    {
+      "children": [
+        1
+      ],
+      "id": 0,
+      "kind": "root",
+      "parent": -1
+    },
+    {
+      "args": [
+        "boat_1",
+        3
+      ],
+      "children": [
+        2
+      ],
+      "first_step": 0,
+      "id": 1,
+      "kind": "task",
+      "method_idx": 1,
+      "name": "m_move",
+      "parent": 0
+    },
+    {
+      "args": [
+        "boat_1",
+        3
+      ],
+      "children": [],
+      "id": 2,
+      "kind": "action",
+      "name": "a_swim",
+      "parent": 1,
+      "plan_step": 0
+    }
+  ],
+  "tree_nodes": 3
+}

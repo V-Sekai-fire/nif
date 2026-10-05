@@ -1,0 +1,24 @@
+{
+  "plan": [],
+  "steps": 0,
+  "tree": [
+    {
+      "children": [
+        1
+      ],
+      "id": 0,
+      "kind": "root",
+      "parent": -1
+    },
+    {
+      "children": [],
+      "first_step": 0,
+      "id": 1,
+      "kind": "task",
+      "method_idx": 0,
+      "name": "move_blocks",
+      "parent": 0
+    }
+  ],
+  "tree_nodes": 2
+}

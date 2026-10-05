@@ -1,0 +1,117 @@
+{
+  "plan": [
+    [
+      "a_start_task",
+      "job1_taskA",
+      "machine1"
+    ],
+    [
+      "a_finish_task",
+      "job1_taskA",
+      "machine1"
+    ],
+    [
+      "a_start_task",
+      "job1_taskB",
+      "machine2"
+    ],
+    [
+      "a_finish_task",
+      "job1_taskB",
+      "machine2"
+    ]
+  ],
+  "steps": 4,
+  "tree": [
+    {
+      "children": [
+        1
+      ],
+      "id": 0,
+      "kind": "root",
+      "parent": -1
+    },
+    {
+      "args": [
+        "job1_taskA",
+        "machine1"
+      ],
+      "children": [
+        2,
+        3,
+        4
+      ],
+      "first_step": 0,
+      "id": 1,
+      "kind": "task",
+      "method_idx": 1,
+      "name": "schedule_task",
+      "parent": 0
+    },
+    {
+      "args": [
+        "job1_taskA",
+        "machine1"
+      ],
+      "children": [],
+      "id": 2,
+      "kind": "action",
+      "name": "a_start_task",
+      "parent": 1,
+      "plan_step": 0
+    },
+    {
+      "args": [
+        "job1_taskA",
+        "machine1"
+      ],
+      "children": [],
+      "id": 3,
+      "kind": "action",
+      "name": "a_finish_task",
+      "parent": 1,
+      "plan_step": 1
+    },
+    {
+      "args": [
+        "job1_taskB",
+        "machine2"
+      ],
+      "children": [
+        5,
+        6
+      ],
+      "first_step": 2,
+      "id": 4,
+      "kind": "task",
+      "method_idx": 1,
+      "name": "schedule_task",
+      "parent": 1
+    },
+    {
+      "args": [
+        "job1_taskB",
+        "machine2"
+      ],
+      "children": [],
+      "id": 5,
+      "kind": "action",
+      "name": "a_start_task",
+      "parent": 4,
+      "plan_step": 2
+    },
+    {
+      "args": [
+        "job1_taskB",
+        "machine2"
+      ],
+      "children": [],
+      "id": 6,
+      "kind": "action",
+      "name": "a_finish_task",
+      "parent": 4,
+      "plan_step": 3
+    }
+  ],
+  "tree_nodes": 7
+}

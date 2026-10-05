@@ -1,0 +1,48 @@
+{
+  "plan": [
+    [
+      "a_fly",
+      "drone_1",
+      "1"
+    ]
+  ],
+  "steps": 1,
+  "tree": [
+    {
+      "children": [
+        1
+      ],
+      "id": 0,
+      "kind": "root",
+      "parent": -1
+    },
+    {
+      "args": [
+        "drone_1",
+        1
+      ],
+      "children": [
+        2
+      ],
+      "first_step": 0,
+      "id": 1,
+      "kind": "task",
+      "method_idx": 0,
+      "name": "m_move",
+      "parent": 0
+    },
+    {
+      "args": [
+        "drone_1",
+        1
+      ],
+      "children": [],
+      "id": 2,
+      "kind": "action",
+      "name": "a_fly",
+      "parent": 1,
+      "plan_step": 0
+    }
+  ],
+  "tree_nodes": 3
+}
