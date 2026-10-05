@@ -1,14 +1,19 @@
 defmodule Taskweft.Differential.Run do
   @moduledoc """
-  Runs the corpus through one build and compares two runs case by case. A case
-  that hit the wall-clock budget, saw a memo-key hash collision, or loads a
-  math/random domain is UNCHECKED on that pair and never counts as agreeing.
+  Runs the corpus through one build and compares two runs case by case. Every
+  run has a step budget, counted in planner budget probes, so which cases
+  exhaust it does not depend on the machine; the wall clock is only a backstop.
+  A case that exhausted either budget, saw a memo-key hash collision, or loads
+  a math/random domain is UNCHECKED on that pair and never counts as agreeing.
   """
 
-  def run(mod, cases, budget_ms, opts \\ []) do
+  @backstop_ms 60_000
+  @collision_kinds [:fail_cache, :success_cache, :method_stats, :decomposition]
+
+  def run(mod, cases, steps, opts \\ []) do
     trace_dir = opts[:traces]
     if trace_dir, do: File.mkdir_p!(trace_dir)
-    one = fn c -> {c.id, call(mod, c, budget_ms, trace_path(trace_dir, c))} end
+    one = fn c -> {c.id, call(mod, c, steps, trace: trace_path(trace_dir, c))} end
 
     if Keyword.get(opts, :parallel, true) do
       cases
@@ -19,18 +24,29 @@ defmodule Taskweft.Differential.Run do
     end
   end
 
-  def call(mod, c, budget_ms, trace \\ "") do
-    {status, plan, hash, events, bytes, budget, collisions, us} =
-      mod.plan(c.domain, c.problem, budget_ms, trace)
+  def call(mod, c, steps, opts \\ []) do
+    ms = Keyword.get(opts, :ms, @backstop_ms)
+
+    {status, plan, hash, events, bytes, budget, used, steps_hit, kinds, us} =
+      mod.plan(c.domain, c.problem, ms, steps, Keyword.get(opts, :trace, ""))
 
     %{
       status: status,
       plan: plan,
       trace: {hash, events, bytes},
       budget: budget,
-      collisions: collisions,
+      steps: used,
+      steps_hit: steps_hit,
+      collisions: Enum.sum(kinds),
+      collision_kinds: Map.new(Enum.zip(@collision_kinds, kinds)),
       us: us
     }
+  end
+
+  def flagged_by_kind(runs) do
+    Map.new(@collision_kinds, fn k ->
+      {k, Enum.count(runs, fn {_, r} -> r.collision_kinds[k] > 0 end)}
+    end)
   end
 
   def shipped(c) do
@@ -46,7 +62,12 @@ defmodule Taskweft.Differential.Run do
     do: Path.join(dir, String.replace(c.id, ~r/[^A-Za-z0-9_.-]/, "_") <> ".trace")
 
   def unchecked(c, r) do
-    for {reason, true} <- [budget: r.budget, collision: r.collisions > 0, random: c.random],
+    for {reason, true} <- [
+          budget: r.budget,
+          steps: r.steps_hit,
+          collision: r.collisions > 0,
+          random: c.random
+        ],
         do: reason
   end
 
@@ -71,11 +92,25 @@ defmodule Taskweft.Differential.Run do
     end)
   end
 
+  def coverage(cmp) do
+    %{
+      checked: cmp.checked,
+      unchecked: cmp.unchecked |> Map.values() |> List.flatten() |> Enum.frequencies()
+    }
+  end
+
+  def check_coverage(cmp, expected) do
+    case coverage(cmp) do
+      ^expected -> :ok
+      actual -> {:error, "coverage #{inspect(actual)}, expected #{inspect(expected)}"}
+    end
+  end
+
   def summary(name, cmp) do
-    counts = cmp.unchecked |> Map.values() |> List.flatten() |> Enum.frequencies()
+    counts = coverage(cmp).unchecked
 
     "#{name}: checked #{cmp.checked}, UNCHECKED #{map_size(cmp.unchecked)} " <>
-      "(budget #{counts[:budget] || 0}, collision #{counts[:collision] || 0}, math/random #{counts[:random] || 0}), " <>
+      "(budget #{counts[:budget] || 0}, steps #{counts[:steps] || 0}, collision #{counts[:collision] || 0}, math/random #{counts[:random] || 0}), " <>
       "outcome changed #{length(cmp.outcome)}, trace changed #{length(cmp.trace)}"
   end
 

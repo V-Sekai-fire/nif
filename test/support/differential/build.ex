@@ -12,6 +12,9 @@ defmodule Taskweft.Differential.Build do
   @instrument [
     {"            fired = true;\n",
      "            fired = true;\n            tw_diff_budget_fired();\n", 1},
+    {"        if (fired) return true;\n        if ((++tick",
+     "        if (fired) return true;\n        if (tw_diff_step()) { fired = true; return true; }\n        if ((++tick",
+     1},
     {"""
          TwMemoKey cache_key = 0;
          if (fail_cache) {
@@ -72,9 +75,16 @@ defmodule Taskweft.Differential.Build do
        "            new_tasks.insert(new_tasks.end(), remaining.begin(), remaining.end());\n            const uint64_t decomp_sig = tw_tasks_hash(new_tasks);\n            if (!seen_decompositions.insert(decomp_sig, new_tasks)",
        1}
     ],
-    nocache: [
+    nofailcache: [
       {"blacklist, budget, &fail_cache, &success_cache, &method_stats);",
-       "blacklist, budget, nullptr, nullptr, &method_stats);", 1}
+       "blacklist, budget, nullptr, &success_cache, &method_stats);", 1}
+    ],
+    nosuccesscache: [
+      {"blacklist, budget, &fail_cache, &success_cache, &method_stats);",
+       "blacklist, budget, &fail_cache, nullptr, &method_stats);", 1}
+    ],
+    nobestfirst: [
+      {"    if (best_score > 0 && best_idx != 0) std::swap(order[0], order[best_idx]);\n", "", 1}
     ],
     fuel399: [
       {"static constexpr int TW_MAX_DEPTH = 400;", "static constexpr int TW_MAX_DEPTH = 399;", 1}
@@ -84,6 +94,11 @@ defmodule Taskweft.Differential.Build do
        "    h = tw_mix_hash(h, tw_tasks_hash(tasks));\n    return (h & 0xf) + 1;\n", 1},
       {"        h = tw_mix_hash(h, tw_task_hash(t));\n    return h;\n",
        "        h = tw_mix_hash(h, tw_task_hash(t));\n    return h & 0xf;\n", 1}
+    ],
+    collide_stats: [
+      {"    for (const TwValue &a : args) h = tw_mix_hash(h, a.stable_hash());\n    return h;\n",
+       "    for (const TwValue &a : args) h = tw_mix_hash(h, a.stable_hash());\n    return h & 0xf;\n",
+       1}
     ]
   }
 
@@ -157,7 +172,9 @@ defmodule Taskweft.Differential.Build do
     body =
       quote do
         def load(path), do: :erlang.load_nif(path, 0)
-        def plan(_domain, _problem, _budget_ms, _trace), do: :erlang.nif_error(:not_loaded)
+
+        def plan(_domain, _problem, _budget_ms, _step_limit, _trace),
+          do: :erlang.nif_error(:not_loaded)
       end
 
     unless Code.ensure_loaded?(module),
