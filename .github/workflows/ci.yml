@@ -7,7 +7,29 @@ on:
     branches: [main]
   merge_group:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
+  differential:
+    name: differential (RECTGTN NIF)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: '27'
+          elixir-version: '1.17'
+
+      - name: mix deps.get
+        run: mix deps.get
+
+      - name: mix test --only differential
+        run: mix test --only differential
+
   build:
     name: ${{ matrix.os }} / ${{ matrix.toolchain }}
     runs-on: ${{ matrix.os }}

@@ -1,0 +1,107 @@
+{
+  "plan": [
+    [
+      "a_search_for",
+      "l1"
+    ],
+    [
+      "a_move",
+      "l1"
+    ],
+    [
+      "a_search_for",
+      "g"
+    ],
+    [
+      "a_cross_gate_40",
+      "g"
+    ]
+  ],
+  "steps": 4,
+  "tree": [
+    {
+      "children": [
+        1
+      ],
+      "id": 0,
+      "kind": "root",
+      "parent": -1
+    },
+    {
+      "args": [
+        "l1"
+      ],
+      "children": [
+        2,
+        3,
+        4
+      ],
+      "first_step": 0,
+      "id": 1,
+      "kind": "task",
+      "method_idx": 1,
+      "name": "move_task",
+      "parent": 0
+    },
+    {
+      "args": [
+        "l1"
+      ],
+      "children": [],
+      "id": 2,
+      "kind": "action",
+      "name": "a_search_for",
+      "parent": 1,
+      "plan_step": 0
+    },
+    {
+      "args": [
+        "l1"
+      ],
+      "children": [],
+      "id": 3,
+      "kind": "action",
+      "name": "a_move",
+      "parent": 1,
+      "plan_step": 1
+    },
+    {
+      "args": [
+        "g"
+      ],
+      "children": [
+        5,
+        6
+      ],
+      "first_step": 2,
+      "id": 4,
+      "kind": "task",
+      "method_idx": 1,
+      "name": "cross_gate_task",
+      "parent": 1
+    },
+    {
+      "args": [
+        "g"
+      ],
+      "children": [],
+      "id": 5,
+      "kind": "action",
+      "name": "a_search_for",
+      "parent": 4,
+      "plan_step": 2
+    },
+    {
+      "args": [
+        "g"
+      ],
+      "children": [],
+      "id": 6,
+      "kind": "action",
+      "name": "a_cross_gate_40",
+      "parent": 4,
+      "plan_step": 3
+    }
+  ],
+  "tree_nodes": 7
+}

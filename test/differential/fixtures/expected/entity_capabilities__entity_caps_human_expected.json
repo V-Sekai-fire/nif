@@ -1,0 +1,48 @@
+{
+  "plan": [
+    [
+      "a_walk",
+      "human_1",
+      "4"
+    ]
+  ],
+  "steps": 1,
+  "tree": [
+    {
+      "children": [
+        1
+      ],
+      "id": 0,
+      "kind": "root",
+      "parent": -1
+    },
+    {
+      "args": [
+        "human_1",
+        4
+      ],
+      "children": [
+        2
+      ],
+      "first_step": 0,
+      "id": 1,
+      "kind": "task",
+      "method_idx": 2,
+      "name": "m_move",
+      "parent": 0
+    },
+    {
+      "args": [
+        "human_1",
+        4
+      ],
+      "children": [],
+      "id": 2,
+      "kind": "action",
+      "name": "a_walk",
+      "parent": 1,
+      "plan_step": 0
+    }
+  ],
+  "tree_nodes": 3
+}

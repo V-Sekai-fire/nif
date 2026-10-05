@@ -1,0 +1,48 @@
+{
+  "plan": [
+    [
+      "a_move_euclidean",
+      "r1",
+      "2"
+    ]
+  ],
+  "steps": 1,
+  "tree": [
+    {
+      "children": [
+        1
+      ],
+      "id": 0,
+      "kind": "root",
+      "parent": -1
+    },
+    {
+      "args": [
+        "r1",
+        2
+      ],
+      "children": [
+        2
+      ],
+      "first_step": 0,
+      "id": 1,
+      "kind": "task",
+      "method_idx": 1,
+      "name": "move_task",
+      "parent": 0
+    },
+    {
+      "args": [
+        "r1",
+        2
+      ],
+      "children": [],
+      "id": 2,
+      "kind": "action",
+      "name": "a_move_euclidean",
+      "parent": 1,
+      "plan_step": 0
+    }
+  ],
+  "tree_nodes": 3
+}

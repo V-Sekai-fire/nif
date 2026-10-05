@@ -1,0 +1,162 @@
+{
+  "plan": [
+    [
+      "a_move_euclidean",
+      "r1",
+      "2"
+    ],
+    [
+      "a_inspect_person",
+      "r1",
+      "p1"
+    ],
+    [
+      "a_support_person",
+      "r1",
+      "p1"
+    ],
+    [
+      "a_move_euclidean",
+      "w1",
+      "2"
+    ]
+  ],
+  "steps": 4,
+  "tree": [
+    {
+      "children": [
+        1
+      ],
+      "id": 0,
+      "kind": "root",
+      "parent": -1
+    },
+    {
+      "args": [
+        "r1",
+        "p1"
+      ],
+      "children": [
+        2
+      ],
+      "first_step": 0,
+      "id": 1,
+      "kind": "task",
+      "method_idx": 0,
+      "name": "rescue_task",
+      "parent": 0
+    },
+    {
+      "args": [
+        "r1",
+        "p1"
+      ],
+      "children": [
+        3
+      ],
+      "first_step": 0,
+      "id": 2,
+      "kind": "task",
+      "method_idx": 0,
+      "name": "help_person_task",
+      "parent": 1
+    },
+    {
+      "args": [
+        "r1",
+        2
+      ],
+      "children": [
+        4,
+        5,
+        6
+      ],
+      "first_step": 0,
+      "id": 3,
+      "kind": "task",
+      "method_idx": 1,
+      "name": "move_task",
+      "parent": 2
+    },
+    {
+      "args": [
+        "r1",
+        2
+      ],
+      "children": [],
+      "id": 4,
+      "kind": "action",
+      "name": "a_move_euclidean",
+      "parent": 3,
+      "plan_step": 0
+    },
+    {
+      "args": [
+        "r1",
+        "p1"
+      ],
+      "children": [],
+      "id": 5,
+      "kind": "action",
+      "name": "a_inspect_person",
+      "parent": 3,
+      "plan_step": 1
+    },
+    {
+      "args": [
+        "r1",
+        "p1"
+      ],
+      "children": [
+        7,
+        8
+      ],
+      "first_step": 2,
+      "id": 6,
+      "kind": "task",
+      "method_idx": 0,
+      "name": "support_task",
+      "parent": 3
+    },
+    {
+      "args": [
+        "r1",
+        "p1"
+      ],
+      "children": [],
+      "id": 7,
+      "kind": "action",
+      "name": "a_support_person",
+      "parent": 6,
+      "plan_step": 2
+    },
+    {
+      "args": [
+        "w1",
+        2
+      ],
+      "children": [
+        9
+      ],
+      "first_step": 3,
+      "id": 8,
+      "kind": "task",
+      "method_idx": 1,
+      "name": "move_task",
+      "parent": 6
+    },
+    {
+      "args": [
+        "w1",
+        2
+      ],
+      "children": [],
+      "id": 9,
+      "kind": "action",
+      "name": "a_move_euclidean",
+      "parent": 8,
+      "plan_step": 3
+    }
+  ],
+  "tree_nodes": 10
+}

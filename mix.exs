@@ -9,6 +9,7 @@ defmodule Taskweft.NIF.MixProject do
       version: @version,
       elixir: "~> 1.17",
       compilers: [:elixir_make] ++ Mix.compilers(),
+      elixirc_paths: elixirc_paths(Mix.env()),
       deps: deps(),
       dialyzer: [plt_add_apps: [:mix]],
       description: "C++20 HTN planner NIF (RECTGTN model) + HRR for Elixir",
@@ -24,6 +25,9 @@ defmodule Taskweft.NIF.MixProject do
       links: %{"GitHub" => "https://github.com/taskweft/nif"}
     ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
 
   def application do
     [extra_applications: [:logger]]
